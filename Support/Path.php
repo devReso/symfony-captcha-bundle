@@ -16,7 +16,7 @@ final class Path
      */
     public static function getLibPackageDirPath()
     {
-        return __DIR__ . '/../../captcha/';
+        return __DIR__ . '/../../../captcha-com/captcha/';
     }
 
     /**

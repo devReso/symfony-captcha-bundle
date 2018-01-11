@@ -9,7 +9,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 class CaptchaHandlerController extends Controller
 {
     /**
-     * @var object
+     * @var BotDetectCaptchaHelper object
      */
     private $captcha;
 
@@ -60,7 +60,7 @@ class CaptchaHandlerController extends Controller
         $captchaId = $this->getUrlParameter('c');
 
         if (!is_null($captchaId) && preg_match('/^(\w+)$/ui', $captchaId)) {
-            return new BotDetectCaptchaHelper($this->get('session'), $captchaId);
+            return new BotDetectCaptchaHelper($this->get('session'), $captchaId, $this->container);
         } else {
             throw new BadRequestHttpException('Invalid captcha id.');
         }

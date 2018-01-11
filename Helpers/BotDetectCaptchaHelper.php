@@ -7,6 +7,7 @@ use Captcha\Bundle\CaptchaBundle\Support\UserCaptchaConfiguration;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Validator\Exception\InvalidArgumentException;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class BotDetectCaptchaHelper
 {
@@ -16,6 +17,11 @@ class BotDetectCaptchaHelper
     private $captcha;
 
     /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
      * Constructor.
      *
      * @param  SessionInterface  $session
@@ -23,28 +29,30 @@ class BotDetectCaptchaHelper
      *
      * @return void
      */
-    public function __construct(SessionInterface $session, $configName)
+    public function __construct(SessionInterface $session, $configName, ContainerInterface $container)
     {
+        $this->container = $container;
+
         // load BotDetect Library
         LibraryLoader::load($session);
 
         // get captcha config
         $captchaId = $configName;
-        $config = UserCaptchaConfiguration::get($captchaId);
+        $captchaConfig = UserCaptchaConfiguration::get($captchaId, $container);
 
-        if (null === $config) {
+        if (null === $captchaConfig) {
             throw new InvalidArgumentException(sprintf('The "%s" option could not be found in app/config/captcha.php file.', $captchaId));
         }
 
-        if (!is_array($config)) {
-            throw new UnexpectedTypeException($config, 'array');
+        if (!is_array($captchaConfig)) {
+            throw new UnexpectedTypeException($captchaConfig, 'array');
         }
 
         // save user's captcha configuration options
-        UserCaptchaConfiguration::save($config);
+        UserCaptchaConfiguration::save($captchaConfig);
 
         // create a BotDetect Captcha object instance
-        $this->initCaptcha($config);
+        $this->initCaptcha($captchaConfig);
     }
 
     /**

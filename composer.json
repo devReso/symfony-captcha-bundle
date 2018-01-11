@@ -1,5 +1,5 @@
 {
-    "name": "captcha-com/symfony-captcha-bundle",
+    "name": "mateusz-sawit/symfony-captcha-bundle",
     "type": "symfony-bundle",
     "description": "BotDetect 4 PHP Captcha generator integration for the Symfony framework.",
     "keywords": ["captcha", "captcha bundle", "symfony captcha"],

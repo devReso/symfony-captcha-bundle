@@ -24,13 +24,20 @@ class BotDetectCaptcha
     public static $productInfo;
 
     /**
+     * @var array
+     */
+    private $symfConfig;
+
+    /**
      * Constructor.
      * 
      * @param ContainerInterface  $container
      */
     public function __construct(ContainerInterface $container)
     {
+        $config = $container->getParameter('captcha.config.captchaconfig');
         $this->container = $container;
+        $this->symfConfig = $config;
     }
 
     /**
@@ -65,7 +72,7 @@ class BotDetectCaptcha
     public function getCaptchaInstance(SessionInterface $session = null, $configName = '')
     {
         if (!$this->captchaInstanceAlreadyCreated()) {
-            $this->captcha = new BotDetectCaptchaHelper($session, $configName);
+            $this->captcha = new BotDetectCaptchaHelper($session, $configName, $this->container);
         }
 
         return $this->captcha;

@@ -14,10 +14,15 @@ class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('captcha');
-
+        //UserInputID: 'captchaCode', ImageWidth: 250, ImageHeight: 50
         $rootNode
             ->children()
-                ->variableNode('captchaConfig')->defaultValue(null)->end()
+                ->arrayNode('captchaConfig')
+                    ->useAttributeAsKey('name')
+                    ->variablePrototype()
+
+                    ->end()
+                ->end()
                 ->booleanNode('addLayoutStylesheetInclude')->defaultTrue()->end()
             ->end()
         ;

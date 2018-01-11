@@ -4,6 +4,7 @@ namespace Captcha\Bundle\CaptchaBundle\Support;
 
 use Captcha\Bundle\CaptchaBundle\Support\Exception\FileNotFoundException;
 use Captcha\Bundle\CaptchaBundle\Support\Path;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 final class UserCaptchaConfiguration
 {
@@ -19,12 +20,12 @@ final class UserCaptchaConfiguration
      *
      * @return array
      */
-    public static function get($captchaId)
+    public static function get($captchaId, ContainerInterface $container)
     {
         $captchaId = trim($captchaId);
 
         $captchaIdTemp = strtolower($captchaId);
-        $configs = array_change_key_case(self::all(), CASE_LOWER);
+        $configs = array_change_key_case(self::all($container), CASE_LOWER);
 
         $config = (is_array($configs) && array_key_exists($captchaIdTemp, $configs))
             ? $configs[$captchaIdTemp]
@@ -44,15 +45,17 @@ final class UserCaptchaConfiguration
      *
      * @throw FileNotFoundException
      */
-    public static function all()
+    public static function all(ContainerInterface $container)
     {
         $configPath = Path::getConfigDirPath('captcha.php');
 
         if (!file_exists($configPath)) {
-            throw new FileNotFoundException('File "app/config/captcha.php" could not be found.');
+            //throw new FileNotFoundException('File "app/config/captcha.php" could not be found.');
+            $captchaConfigs = $container->getParameter('captcha.config.captchaConfig');
         }
-
-        $captchaConfigs = require $configPath;
+        else {
+            $captchaConfigs = require $configPath;
+        }
 
         return $captchaConfigs;
     }
